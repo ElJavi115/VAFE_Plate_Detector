@@ -1,9 +1,20 @@
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:plate_detector/pages/user_page.dart';
+
+import 'services/plate_recognition.dart';
 import 'pages/home_page.dart';
 import 'pages/camera_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await PlateRecognitionPipeline.instance.preload();
+  } catch (e) {
+    // Si falla, no truena la app, solo se inicializará al primer uso.
+    debugPrint('No se pudo precargar el modelo: $e');
+  }
+
   runApp(const MyApp());
 }
 
@@ -13,14 +24,53 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       title: 'Detector de Placas',
-      initialRoute: "/",
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.blue,
+      ),
+
+      // Pantalla inicial
+      home: const HomePage(),
+
+      // Rutas nombradas que usas en tu HomePage
       routes: {
-        "/": (context) => const HomePage(),
-        "/usuarios": (context) => const UserPage(),
-        "/camara": (context) => const CameraPage(),
+        '/camara': (_) => const CameraPage(),
+        // Estas dos las puedes reemplazar por tus páginas reales
+        '/usuarios': (_) => const _UsuariosPlaceholderPage(),
+        '/autos': (_) => const _AutosPlaceholderPage(),
       },
+    );
+  }
+}
+
+/// PLACEHOLDER: Pantalla temporal para "Usuarios registrados"
+class _UsuariosPlaceholderPage extends StatelessWidget {
+  const _UsuariosPlaceholderPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Usuarios registrados')),
+      body: const Center(
+        child: Text('Aquí irá la pantalla de usuarios registrados'),
+      ),
+    );
+  }
+}
+
+/// PLACEHOLDER: Pantalla temporal para "Autos registrados"
+class _AutosPlaceholderPage extends StatelessWidget {
+  const _AutosPlaceholderPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Autos registrados')),
+      body: const Center(
+        child: Text('Aquí irá la pantalla de autos registrados'),
+      ),
     );
   }
 }

@@ -35,6 +35,12 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   carousel_slider: ^5.1.1
+  http: ^1.6.0
+  paddle_ocr: ^0.0.5
+  tflite_flutter: ^0.12.1
+  path_provider: ^2.1.5
+  image: ^3.3.0
+  camera: ^0.11.3
 
 dev_dependencies:
   flutter_test:

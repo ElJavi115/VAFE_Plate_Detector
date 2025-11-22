@@ -1,61 +1,63 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-
-        const SizedBox(height: 30),
-
-        Center(
-          child: Text(
-            "Detector de Placas",
-            style: Theme.of(context).textTheme.headlineSmall,
-            textAlign: TextAlign.center,
-          )
-          ),
-
-        const SizedBox(height: 30),
-
-        _buildListTile(
-          context,
-          "Usuarios registrados",
-          Icons.person,
-          "/usuarios",
-        ),
-
-        _buildListTile(
-          context,
-          "Autos registrados",
-          Icons.car_crash,
-          "/autos",
-        ),
-
-        _buildListTile(
-          context,
-          "Cámara / Detector",
-          Icons.camera_alt,
-          "/camara",
-        ),
-      ],
-    ),
-  );
+  @override
+  State<HomePage> createState() => _HomePageState();
 }
 
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
 
-Widget _buildListTile(BuildContext context, String titulo, IconData icono, String ruta) {
-    return Card(
-      child: ListTile(
-        leading: Icon(icono, size: 32),
-        title: Text(titulo),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: () => Navigator.pushNamed(context, ruta),
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/usuarios');
+        break;
+      case 1:
+        Navigator.pushNamed(context, '/autos');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/camara');
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Detector de Placas"),
+        centerTitle: true,
+      ),
+      body: const Center(
+        child: Text(
+          "Selecciona una opción en el menú de abajo",
+          textAlign: TextAlign.center,
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Usuarios',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.car_crash),
+            label: 'Autos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.camera_alt),
+            label: 'Cámara',
+          ),
+        ],
       ),
     );
   }

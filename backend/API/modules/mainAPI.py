@@ -21,10 +21,11 @@ def cargar_datos_iniciales():
                 "persona": {
                     "nombre": "Juan",
                     "edad": 30,
+                    "numeroControl": "123456",
                     "correo": "juan@example.com",
                 },
                 "auto": {
-                    "placa": "ABC123",
+                    "placa": "A00-AAA",
                     "marca": "Nissan",
                     "modelo": "Sentra",
                     "color": "Rojo",
@@ -34,10 +35,11 @@ def cargar_datos_iniciales():
                 "persona": {
                     "nombre": "Ana",
                     "edad": 28,
+                    "numeroControl": "654321",
                     "correo": "ana@example.com",
                 },
                 "auto": {
-                    "placa": "XYZ987",
+                    "placa": "NA-86-83",
                     "marca": "Toyota",
                     "modelo": "Corolla",
                     "color": "Azul",
@@ -47,6 +49,7 @@ def cargar_datos_iniciales():
                 "persona": {
                     "nombre": "Carlos",
                     "edad": 40,
+                    "numeroControl": "112233",
                     "correo": "carlos@example.com",
                 },
                 "auto": {
@@ -96,26 +99,3 @@ def buscar_datos_por_placa(placa):
     finally:
         db.close()
         
-@app.get("/debug/autos")
-def listar_datos():
-    db = SessionLocal()
-    try:
-        autos = db.query(Auto).all()
-        return [
-            {
-                "placa": a.placa,
-                "marca": a.marca,
-                "modelo": a.modelo,
-                "color": a.color,
-                "persona_id": a.persona_id,
-                "persona": {
-                    "id": a.persona.id,
-                    "nombre": a.persona.nombre,
-                    "edad": a.persona.edad,
-                    "correo": a.persona.correo,
-                },
-            }
-            for a in autos
-        ]
-    finally:
-        db.close()
