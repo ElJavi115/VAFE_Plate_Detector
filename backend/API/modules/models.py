@@ -8,7 +8,10 @@ class Persona(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String, nullable=False)
     edad = Column(Integer, nullable=False)
+    numeroControl = Column(String, unique=True, nullable=False)
     correo = Column(String, unique=True, nullable=False)
+    estatus = Column(String, nullable=False)
+    noIncidencias = Column(Integer, nullable=False, default=0)
     autos = relationship("Auto", back_populates="persona")
 
 class Auto(Base):

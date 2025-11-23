@@ -1,10 +1,9 @@
-// plate_data.dart
 import 'auto_model.dart';
 import 'user_model.dart';
 
 class PlateData {
   final Auto autoData;
-  final User userData;
+  final Persona userData;
 
   PlateData({
     required this.autoData,
@@ -14,7 +13,7 @@ class PlateData {
   factory PlateData.fromJson(Map<String, dynamic> json) {
     return PlateData(
       autoData: Auto.fromJson(json['auto'] as Map<String, dynamic>),
-      userData: User.fromJson(json['persona'] as Map<String, dynamic>),
+      userData: Persona.fromJson(json['persona'] as Map<String, dynamic>),
     );
   }
 

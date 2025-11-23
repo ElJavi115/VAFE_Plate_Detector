@@ -23,21 +23,12 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: Colors.blue,
       ),
 
-      // Pantalla inicial
       home: const HomePage(),
 
-      // Rutas nombradas que usas en tu HomePage
-      routes: {
-        '/camara': (_) => const CameraPage(),
-        // Estas dos las puedes reemplazar por tus páginas reales
-        '/usuarios': (_) => const _UsuariosPlaceholderPage(),
-        '/autos': (_) => const _AutosPlaceholderPage(),
-      },
     );
   }
 }
 
-/// PLACEHOLDER: Pantalla temporal para "Usuarios registrados"
 class _UsuariosPlaceholderPage extends StatelessWidget {
   const _UsuariosPlaceholderPage({super.key});
 

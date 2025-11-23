@@ -1,4 +1,9 @@
+// lib/pages/home_page.dart
 import 'package:flutter/material.dart';
+import 'package:plate_detector/pages/user_section_page.dart';
+
+import '../widgets/home_action_fab.dart';
+import 'camera_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,17 +19,20 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
 
-    switch (index) {
+  Widget _buildBody() {
+    switch (_selectedIndex) {
       case 0:
-        Navigator.pushNamed(context, '/usuarios');
-        break;
+        return const UsuariosSection();   // lista + buscador de usuarios
       case 1:
-        Navigator.pushNamed(context, '/autos');
-        break;
+        return Text('Autos Section');    // lista + buscador de autos/incidencias
       case 2:
-        Navigator.pushNamed(context, '/camara');
-        break;
+        return const CameraPage();        // tu pantalla de cámara actual
+      default:
+        return const Center(
+          child: Text('Selecciona una opción en el menú de abajo'),
+        );
     }
   }
 
@@ -35,12 +43,13 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Detector de Placas"),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text(
-          "Selecciona una opción en el menú de abajo",
-          textAlign: TextAlign.center,
-        ),
-      ),
+
+      // Ahora el body cambia según _selectedIndex
+      body: _buildBody(),
+
+      // El FAB usa el índice para decidir qué acción mostrar
+      floatingActionButton: HomeActionFab(selectedIndex: _selectedIndex),
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -61,4 +70,8 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+class AutosSection {
+  const AutosSection();
 }

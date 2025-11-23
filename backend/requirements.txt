@@ -1,8 +1,8 @@
 fastapi
 uvicorn[standard]
-psycopg2-binary
 SQLAlchemy
-python-dotenv
-paddlepaddle==2.6.1
-paddleocr==2.7.0.3
-opencv-python-headless
+psycopg2-binary
+python-multipart
+pydantic
+paddleocr
+opencv-python
