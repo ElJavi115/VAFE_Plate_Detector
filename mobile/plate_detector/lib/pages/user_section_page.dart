@@ -100,9 +100,7 @@ class _UsuariosSectionState extends State<UsuariosSection> {
           const SizedBox(height: 16),
           Expanded(
             child: filtered.isEmpty
-                ? const Center(
-                    child: Text('No se encontraron usuarios'),
-                  )
+                ? const Center(child: Text('No se encontraron usuarios'))
                 : ListView.builder(
                     itemCount: filtered.length,
                     itemBuilder: (context, index) {
@@ -120,13 +118,65 @@ class _UsuariosSectionState extends State<UsuariosSection> {
                               Text('Incidencias: ${user.noIncidencias}'),
                             ],
                           ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () async {
+                              final confirmar = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text('Eliminar usuario'),
+                                  content: Text(
+                                    '¿Seguro que deseas eliminar a "${user.nombre}"?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(ctx, true),
+                                      child: const Text('Eliminar'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (confirmar == true) {
+                                try {
+                                  final api = ApiClient.instance;
+                                  await api.eliminarPersona(user.id);
+                                  setState(() {
+                                    _usuarios.removeWhere(
+                                      (u) => u.id == user.id,
+                                    );
+                                  });
+                                  if (!mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Usuario eliminado'),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  if (!mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Error al eliminar usuario: $e',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
                           onTap: () async {
                             try {
                               final api = ApiClient.instance;
-                              final plateData = await api
-                                  .obtenerDetallePersona(user.id);
+                              final plateData = await api.obtenerDetallePersona(
+                                user.id,
+                              );
 
-                              final placa = plateData.autoData.placa;
+                              final placa = plateData.autoData?.placa ?? '';
 
                               if (!mounted) return;
                               await Navigator.push(
@@ -144,9 +194,7 @@ class _UsuariosSectionState extends State<UsuariosSection> {
                               // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
-                                    'Error al cargar detalle: $e',
-                                  ),
+                                  content: Text('Error al cargar detalle: $e'),
                                 ),
                               );
                             }

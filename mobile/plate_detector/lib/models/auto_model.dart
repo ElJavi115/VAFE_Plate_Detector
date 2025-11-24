@@ -1,5 +1,5 @@
 class Auto {
-  final String id;
+  final int id;
   final String placa;
   final String marca;
   final String modelo;

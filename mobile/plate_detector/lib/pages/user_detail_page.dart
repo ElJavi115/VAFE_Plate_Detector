@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-
-import '../models/plate_model.dart';
-import '../models/user_model.dart';
-import '../models/auto_model.dart';
-import '../services/api_client.dart';
+import 'package:plate_detector/models/auto_model.dart';
+import 'package:plate_detector/models/plate_model.dart';
+import 'package:plate_detector/models/user_model.dart';
+import 'package:plate_detector/pages/add_vehicle_page.dart';
+import 'package:plate_detector/services/api_client.dart';
 
 class UserDetailPage extends StatefulWidget {
-  final String placaReconocida;
-  final PlateData data;
-  final bool mostrarCoincidencia;
-
+  final String placaReconocida;  
+  final PlateData data;        
+  final bool mostrarCoincidencia; 
   const UserDetailPage({
     super.key,
     required this.placaReconocida,
@@ -23,16 +22,14 @@ class UserDetailPage extends StatefulWidget {
 
 class _UserDetailPageState extends State<UserDetailPage> {
   late final Persona usuario;
-  late final Auto autoPrincipal;
-
+  Auto? autoPrincipal;                     
   late Future<List<Auto>> _autosFuture;
 
   @override
   void initState() {
     super.initState();
     usuario = widget.data.userData;
-    autoPrincipal = widget.data.autoData;
-
+    autoPrincipal = widget.data.autoData;  
     _autosFuture = ApiClient.instance.obtenerAutosPorPersona(usuario.id);
   }
 
@@ -41,12 +38,12 @@ class _UserDetailPageState extends State<UserDetailPage> {
     final placaReconocida = widget.placaReconocida;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Detalles de la placa')),
+      appBar: AppBar(title: const Text('Detalles de la placa / usuario')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // === Info de placa detectada / registrada ===)
-          if (widget.mostrarCoincidencia)
+          // Info de placa detectada 
+          if (widget.mostrarCoincidencia && autoPrincipal != null)
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -69,7 +66,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      autoPrincipal.placa,
+                      autoPrincipal!.placa,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ],
@@ -79,7 +76,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
           const SizedBox(height: 16),
 
-          // === Propietario ===
+          // Propietario
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -93,7 +90,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   const SizedBox(height: 8),
                   _row('Nombre', usuario.nombre),
                   _row('Edad', '${usuario.edad} años'),
-                  _row('Número de control', usuario.numeroControl.toString()),
+                  _row('Número de control', usuario.numeroControl),
                   _row('Correo', usuario.correo),
                   _row('Estatus', usuario.estatus),
                   _row('No. Incidencias', usuario.noIncidencias.toString()),
@@ -145,10 +142,10 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 itemCount: autos.length,
                 itemBuilder: (context, index) {
                   final a = autos[index];
-                  final esDetectada =
-                      widget.mostrarCoincidencia &&
+                  final esDetectada = widget.mostrarCoincidencia &&
                       normalizarPlaca(a.placa) ==
                           normalizarPlaca(placaReconocida);
+
                   return Card(
                     color: esDetectada ? Colors.green.withOpacity(0.1) : null,
                     child: ListTile(
@@ -166,6 +163,57 @@ class _UserDetailPageState extends State<UserDetailPage> {
                             ),
                         ],
                       ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Eliminar auto'),
+                              content: Text(
+                                  '¿Estás seguro de eliminar el auto "${a.placa}"? Esta acción no se puede deshacer.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text('Cancelar'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: const Text('Eliminar'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            try {
+                              await ApiClient.instance.eliminarAuto(a.id);
+                              setState(() {
+                                _autosFuture = ApiClient
+                                    .instance
+                                    .obtenerAutosPorPersona(usuario.id);
+                              });
+                              if (!mounted) return;
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Auto "${a.placa}" eliminado')),
+                              );
+                            } catch (e) {
+                              if (!mounted) return;
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Error al eliminar auto: $e')),
+                              );
+                            }
+                          }
+                        },
+                      ),
                     ),
                   );
                 },
@@ -175,10 +223,35 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
           const SizedBox(height: 24),
 
-          FilledButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Volver'),
-          ),
+          // Botones de acción (
+          if (widget.mostrarCoincidencia) ...[
+            FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Volver'),
+            ),
+          ] else ...[
+            ElevatedButton.icon(
+              onPressed: () async {
+                final creado = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => AddVehiclePage(
+                      personaId: usuario.id,
+                    ),
+                  ),
+                );
+
+                if (creado == true) {
+                  setState(() {
+                    _autosFuture =
+                        ApiClient.instance.obtenerAutosPorPersona(usuario.id);
+                  });
+                }
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Agregar auto'),
+            ),
+          ],
         ],
       ),
     );

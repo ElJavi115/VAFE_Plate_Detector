@@ -4,5 +4,6 @@ SQLAlchemy
 psycopg2-binary
 python-multipart
 pydantic
+pydantic[email]
 paddleocr
 opencv-python

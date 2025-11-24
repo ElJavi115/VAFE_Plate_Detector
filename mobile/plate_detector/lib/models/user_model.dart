@@ -1,5 +1,5 @@
 class Persona{
-  final String id;
+  final int id;
   final String nombre;
   final int edad;
   final String numeroControl;

@@ -2,7 +2,7 @@ import 'auto_model.dart';
 import 'user_model.dart';
 
 class PlateData {
-  final Auto autoData;
+  final Auto? autoData;
   final Persona userData;
 
   PlateData({
@@ -11,15 +11,19 @@ class PlateData {
   });
 
   factory PlateData.fromJson(Map<String, dynamic> json) {
+    final autoJson = json['auto'];
+
     return PlateData(
-      autoData: Auto.fromJson(json['auto'] as Map<String, dynamic>),
+      autoData: autoJson != null
+          ? Auto.fromJson(autoJson as Map<String, dynamic>)
+          : null,
       userData: Persona.fromJson(json['persona'] as Map<String, dynamic>),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'auto': autoData.toJson(),
+      'auto': autoData?.toJson(),
       'persona': userData.toJson(),
     };
   }

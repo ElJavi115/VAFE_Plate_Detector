@@ -10,7 +10,8 @@ class ApiClient {
   ApiClient._internal();
   static final ApiClient instance = ApiClient._internal();
 
-  final String _baseUrl = 'https://placas-api-k5gv.onrender.com';
+  //final String _baseUrl = 'https://placas-api-k5gv.onrender.com';
+  final String _baseUrl = 'http://192.168.24.80:8000';
 
   Future<OcrResult> ocrPlacaFromImage(File imageFile) async {
     final uri = Uri.parse('$_baseUrl/ocr/placa');
@@ -52,7 +53,7 @@ class ApiClient {
     );
   }
 
-   Future<PlateData> obtenerDetallePersona(String personaId) async {
+   Future<PlateData> obtenerDetallePersona(int personaId) async {
     final uri = Uri.parse('$_baseUrl/personas/$personaId/detalle');
     final response = await http.get(uri);
 
@@ -80,6 +81,57 @@ class ApiClient {
         .toList();
   }
 
+  Future<Persona> addPersona(String nombre, int edad, String numeroControl, String correo) async {
+    final uri = Uri.parse('$_baseUrl/personas/add');
+    final body = jsonEncode({
+      'nombre': nombre,
+      'edad': edad,
+      'numeroControl': numeroControl,
+      'correo': correo,
+    });
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Error al añadir persona: ${response.statusCode}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return Persona.fromJson(data);
+  }
+
+  Future<Auto> addAuto(String marca, String modelo, String color, String placa, int personaId) async { 
+    final uri = Uri.parse('$_baseUrl/personas/$personaId/autos');
+    final body = jsonEncode({
+      'marca': marca,
+      'modelo': modelo,
+      'color': color,
+      'placa': placa,
+      'personaId': personaId,
+    });
+
+    final response = await http.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Error al añadir auto: ${response.statusCode}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return Auto.fromJson(data);
+  }
+
   Future<List<Auto>> obtenerAutos() async {
     final uri = Uri.parse('$_baseUrl/autos');
     final response = await http.get(uri);
@@ -94,7 +146,45 @@ class ApiClient {
         .toList();
   }
 
-  Future<List<Auto>> obtenerAutosPorPersona(String personaId) async {
+  Future<void> eliminarAuto(int autoId) async {
+  final uri = Uri.parse('$_baseUrl/autos/$autoId');
+
+  final response = await http.delete(uri);
+
+  if (response.statusCode != 200) {
+    throw Exception(
+      'Error al eliminar auto: ${response.statusCode} ${response.body}',
+    );
+  }
+}
+
+Future<void> eliminarPersona(int personaId) async {
+  final uri = Uri.parse('$_baseUrl/personas/$personaId');
+
+  final response = await http.delete(uri);
+
+  if (response.statusCode != 200) {
+    throw Exception(
+      'Error al eliminar persona: ${response.statusCode} ${response.body}',
+    );
+  }
+}
+
+  Future<List<Persona>> obtenerPersonasConIncidencias() async {
+    final uri = Uri.parse('$_baseUrl/personas/incidencias');
+    final response = await http.get(uri);
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al obtener personas con incidencias: ${response.statusCode}');
+    }
+
+    final data = jsonDecode(response.body) as List<dynamic>;
+    return data
+        .map((item) => Persona.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<List<Auto>> obtenerAutosPorPersona(int personaId) async {
     final uri = Uri.parse('$_baseUrl/personas/$personaId/autos');
     final response = await http.get(uri);
 

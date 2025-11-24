@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plate_detector/pages/add_user_page.dart';
 
 import 'pages/home_page.dart';
 void main() async {
@@ -19,7 +20,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorSchemeSeed: Colors.blue,
       ),
-
+      routes: {
+        '/usuarios/agregar': (context) => const AddUserPage(),
+      },
       home: const HomePage(),
 
     );

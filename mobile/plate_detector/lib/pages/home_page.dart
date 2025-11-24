@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return const UsuariosSection();   
       case 1:
-        return Text('Autos Section');    
+        return Text('Incidencias Section - En construcción');    
       case 2:
         return const CameraPage();
       default:
@@ -56,8 +56,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Usuarios',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.car_crash),
-            label: 'Autos',
+            icon: Icon(Icons.directions_car),
+            label: 'Incidencias',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.camera_alt),

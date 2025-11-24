@@ -10,7 +10,7 @@ class Persona(Base):
     edad = Column(Integer, nullable=False)
     numeroControl = Column(String, unique=True, nullable=False)
     correo = Column(String, unique=True, nullable=False)
-    estatus = Column(String, nullable=False)
+    estatus = Column(String, nullable=False, default="Autorizado")
     noIncidencias = Column(Integer, nullable=False, default=0)
     autos = relationship("Auto", back_populates="persona")
 
@@ -26,3 +26,19 @@ class Auto(Base):
     persona_id = Column(Integer, ForeignKey('personas.id', ondelete = "CASCADE"), nullable=False)
 
     persona = relationship("Persona", back_populates="autos")
+
+class Incidencia(Base):
+    __tablename__ = 'incidencias'
+
+    id = Column(Integer, primary_key=True, index=True)
+    descripcion = Column(String, nullable=False)
+    fecha = Column(String, nullable=False)
+    imagenes = Column(String, nullable=True) 
+    persona_id = Column(Integer, ForeignKey('personas.id', ondelete = "CASCADE"), nullable=False)
+    auto_id = Column(Integer, ForeignKey('autos.id', ondelete = "CASCADE"), nullable=False)
+
+    persona = relationship("Persona", back_populates="incidencias")
+    auto = relationship("Auto", back_populates="incidencias")
+
+Persona.incidencias = relationship("Incidencia", back_populates="persona")
+Auto.incidencias = relationship("Incidencia", back_populates="auto")
