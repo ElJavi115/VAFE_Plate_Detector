@@ -51,7 +51,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Placa detectada (OCR)',
+                      'Placa detectada',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
@@ -60,15 +60,6 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Placa registrada en BD (principal)',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      autoPrincipal!.placa,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
                   ],
                 ),
               ),

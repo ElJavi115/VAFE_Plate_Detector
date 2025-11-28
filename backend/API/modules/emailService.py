@@ -97,7 +97,7 @@ Sistema de Control Vehicular VAFE"""
     return send_email(subject, email, body)
 
 
-def enviar_correo_incidencia_rechazada(email_reportante, incidencia_id, fecha, descripcion):
+def enviar_correo_incidencia_rechazada(email_reportante, incidencia_id, fecha, hora, descripcion):
     subject = f"Incidencia Rechazada - Reporte #{incidencia_id}"
     
     body = f"""Hola,
