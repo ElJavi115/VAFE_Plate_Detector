@@ -238,6 +238,10 @@ class _IncidenciaDetailPageState extends State<IncidenciaDetailPage> {
                   const Divider(),
                   _row('Fecha y Hora', '${inc.fecha} - ${inc.hora}'),
                   _row('Descripción', inc.descripcion),
+                  _row(
+                    'Ubicación',
+                    'Lat: ${inc.latitud}, Lon: ${inc.longitud}',
+                  ),
                 ],
               ),
             ),
